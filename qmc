@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Distance Calculator</title>
+  <script async defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-DEZD_4vufKr9lnkl1jHdiPsaYSvfQ4A&callback=initMap">
+  </script>
+  <style>
+    #distance-box {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 5px;
+      margin-top: 5px;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px;
+      width: 100%;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #distance-result {
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <div id="distance-box">
+    <input type="hidden" id="origin" value="1444 Municipal Parkway, Douglasville, Georgia, 30134" />
+    <label for="street">Street:</label>
+    <input type="text" id="street" placeholder="123 Main St" />
+    <label for="state">State:</label>
+    <input type="text" id="state" placeholder="Georgia" />
+    <label for="zip">Zip Code:</label>
+    <input type="text" id="zip" placeholder="30134" />
+    <button onclick="getAddressesAndCalculateDistance()">Calculate Distance</button>
+    <div id="distance-result"></div>
+  </div>
+  <script>
+    // Function to calculate distance using Distance Matrix API
+    function calculateDistance(origin, destination) {
+      var service = new google.maps.DistanceMatrixService();
+      var request = {
+        origins: [origin],
+        destinations: [destination],
+        travelMode: 'DRIVING',
+        unitSystem: google.maps.UnitSystem.IMPERIAL
+      };
+
+      service.getDistanceMatrix(request, callback);
+    }
+
+    // Function to handle Distance Matrix API response
+    function callback(response, status) {
+      if (status === 'OK') {
+        var distance = response.rows[0].elements[0].distance.text;
+        document.getElementById("distance-result").innerHTML = "Distance: " + distance;
+      } else {
+        document.getElementById("distance-result").innerHTML = "Error: " + status;
+      }
+    }
+
+    // Function to get user input and call calculateDistance
+    function getAddressesAndCalculateDistance() {
+      var street = document.getElementById("street").value;
+      var state = document.getElementById("state").value;
+      var zip = document.getElementById("zip").value;
+
+      // Combine address parts into a single address string
+      var destination = street + ", " + state + ", " + zip;
+
+      // Use the static origin address
+      var origin = document.getElementById("origin").value;
+
+      // Call calculateDistance function with retrieved values
+      calculateDistance(origin, destination);
+    }
+  </script>
+</body>
+</html>
